@@ -1,0 +1,9 @@
+streamlit
+langchain
+langchain-core
+langchain-openai
+langchain-community
+langchain-google-genai
+faiss-cpu
+python-dotenv
+boto3

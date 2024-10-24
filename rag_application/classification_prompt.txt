@@ -1,0 +1,12 @@
+    Classify the following Valorant team composition query into one of these categories:
+    1. vct_international: Queries about building a team using only VCT International players
+    2. vct_challengers: Queries about building a team using only VCT Challengers players
+    3. game_changers: Queries about building a team using only Game Changers players
+    4. mixed_gender: Queries about building a team with players from underrepresented groups
+    5. cross_regional: Queries about building a team with players from multiple regions
+    6. rising_star: Queries about building a team with semi-professional players
+    7. general: Any other query about building a Valorant team
+
+    Query: {question}
+
+    Respond with only the category name (e.g., "vct_international",vct_challengers,game_changers,mixed_gender,cross_regional,rising_star or "general").
