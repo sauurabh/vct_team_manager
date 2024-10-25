@@ -35,7 +35,7 @@ This project is a **Streamlit** application designed to manage and display VALOR
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/your-username/valorant-team-manager.git
-   cd valorant-team-manager
+   cd vct_team_manager
    python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
