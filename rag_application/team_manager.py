@@ -58,30 +58,61 @@ def load_prompt_template(file_path):
         return file.read()
 
 
+# def get_query_type(question):
+#     classification_prompt = load_prompt_template("classification_prompt.txt")
+#     classification_prompt=classification_prompt.format(question=question)
+#     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0, google_api_key=GOOGLE_API_KEY)
+#     response = model.invoke(classification_prompt)
+#     response_content = response.content.strip().lower()
+
+#     valid_categories = ["vct_international", "vct_challengers", "game_changers", "mixed_gender", "cross_regional", "rising_star", "general"]
+#     if response_content in valid_categories:
+#         return response_content
+#     else:
+#         print(f"Warning: Unexpected classification '{response_content}'. Defaulting to 'general'.")
+#         return "general"
 def get_query_type(question):
     classification_prompt = load_prompt_template("classification_prompt.txt")
-    classification_prompt = classification_prompt.format(question=question)
-    
-    aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
-    aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-    
-    client = boto3.client(
-        'bedrock-runtime',
+    formatted_prompt = classification_prompt.format(question=question)
+
+    bedrock = boto3.client(
+        service_name='bedrock-runtime',
         region_name='us-east-1',
-        aws_access_key_id=aws_access_key,
-        aws_secret_access_key=aws_secret_key
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
     )
 
-    response = client.invoke_model(
-        modelId='anthropic.claude-v2',
-        body={"inputText": classification_prompt},
-        contentType='application/json'
-    )
-    
-    response_content = response['body']['completions'][0]['completion'].strip().lower()
 
-    valid_categories = ["vct_international", "vct_challengers", "game_changers", "mixed_gender", "cross_regional", "rising_star", "general"]
+    payload = {
+        "prompt": f"\n\nHuman: {formatted_prompt}\n\nAssistant:",
+        "max_tokens_to_sample": 300,
+        "temperature": 0,
+        "top_k": 250,
+        "top_p": 1,
+        "stop_sequences": ["\n\nHuman:"],
+        "anthropic_version": "bedrock-2023-05-31"
+    }
+    body = json.dumps(payload)
+    model_id = "anthropic.claude-v2"
+    response = bedrock.invoke_model(
+        body=body,
+        modelId=model_id,
+        accept="application/json",
+        contentType="application/json",
+        )
 
+    response_body = json.loads(response.get("body").read())
+    response_content = response_body.get("completions")[0].get("data").get("text")
+        
+    valid_categories = [
+            "vct_international", 
+            "vct_challengers", 
+            "game_changers", 
+            "mixed_gender", 
+            "cross_regional",
+            "rising_star", 
+            "general"]
+        
     if response_content in valid_categories:
         return response_content
     else:
