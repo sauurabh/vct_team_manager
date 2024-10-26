@@ -49,4 +49,5 @@ This project is a **Streamlit** application designed to manage and display VALOR
    ```bash
    cd rag_application
    streamlit run streamlitapp.py
+4. If getting bedrock InvokeModel operation error use commented "get_query_type" function.
 
